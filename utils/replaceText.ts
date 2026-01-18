@@ -1,4 +1,5 @@
 import { getCachedSelectionInfo } from "./getSelectionText";
+import { applySelectionHighlight } from "./selectionStyle";
 
 /**
  * Replaces the selected text with the provided proofread text.
@@ -32,12 +33,15 @@ export function replaceText(proofreadText: string) {
       currentValue.substring(end);
     element.value = newValue;
 
-    // Set cursor position after the replacement
-    const newCursorPosition = start + proofreadText.length;
-    element.setSelectionRange(newCursorPosition, newCursorPosition);
+    // Keep the replaced text selected
+    const newSelectionEnd = start + proofreadText.length;
+    element.setSelectionRange(start, newSelectionEnd);
 
     // Trigger input event so the page knows the value changed
     element.dispatchEvent(new Event("input", { bubbles: true }));
+
+    // Apply light green selection styling
+    applySelectionHighlight();
   } else if (element instanceof Range) {
     // For contenteditable elements and regular page text
     console.log("Replacing in content element");
@@ -47,6 +51,9 @@ export function replaceText(proofreadText: string) {
     element.insertNode(document.createTextNode(proofreadText));
     selection?.removeAllRanges();
     selection?.addRange(element);
+
+    // Apply light green selection styling
+    applySelectionHighlight();
   }
 
   console.log("Text proofread successfully!");
