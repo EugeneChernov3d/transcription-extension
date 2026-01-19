@@ -76,8 +76,9 @@ export async function transcribeAudio(audioBlob: Blob): Promise<string> {
   const formData = new FormData();
   formData.append("file", audioBlob, "audio.wav");
 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://transcription-api-omega.vercel.app';
   const response = await fetch(
-    "https://transcription-api-omega.vercel.app/api/transcribe",
+    `${API_BASE_URL}/api/transcribe`,
     {
       method: "POST",
       body: formData,

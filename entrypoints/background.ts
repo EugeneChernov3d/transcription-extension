@@ -70,7 +70,8 @@ export default defineBackground(() => {
         }
 
         // Call the proofreading API
-        const apiResponse = await fetch('https://transcription-api-omega.vercel.app/api/proofread', {
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://transcription-api-omega.vercel.app';
+        const apiResponse = await fetch(`${API_BASE_URL}/api/proofread`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: response.selectedText }),
