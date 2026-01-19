@@ -128,6 +128,7 @@ export function useTranscriptionModal({
     [onTranscriptionComplete, onError, onClose],
   );
 
+  //Claude, remove it, it is not used now
   const handleToggleRecording = useCallback(async () => {
     if (!isRecordingState) {
       try {

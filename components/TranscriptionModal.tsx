@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { useTranscriptionModal } from "~/hooks/use-transcription-modal";
+import { LiveWaveform } from "@/components/ui/live-waveform";
 
 interface TranscriptionModalProps {
   onTranscriptionComplete: (text: string) => void;
@@ -23,36 +24,33 @@ function TranscriptionModal({
 
   return (
     <div className="transcription-modal-overlay" onClick={onClose}>
-      <div className="transcription-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="transcription-modal bg-white"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="transcription-header">
-          <h2>Speech to Text</h2>
+          <LiveWaveform
+            active={isRecordingState}
+            processing={isProcessing}
+            barWidth={4}
+            barHeight={6}
+            barGap={2}
+            barColor="#3b82f6"
+            height={100}
+            fadeEdges={true}
+          />
           <button className="close-btn" onClick={onClose}>
             ×
           </button>
         </div>
         <div className="transcription-content">
-          <div className="recording-status">
+          {/* <div className="recording-status">
             <div
               className={`recording-dot ${isRecordingState ? "recording" : ""}`}
             />
             <span>{statusText}</span>
-          </div>
-          <button
-            className={`record-btn ${isRecordingState ? "recording" : ""}`}
-            onClick={handleToggleRecording}
-            disabled={isProcessing}
-          >
-            <span className="record-btn-icon">
-              {isRecordingState ? "🔴" : "🎤"}
-            </span>
-            <span className="record-btn-text">
-              {isProcessing
-                ? "Processing..."
-                : isRecordingState
-                  ? "Recording..."
-                  : "Start Recording"}
-            </span>
-          </button>
+          </div> */}
+
           <button
             className="stop-insert-btn"
             onClick={handleStopAndInsert}
