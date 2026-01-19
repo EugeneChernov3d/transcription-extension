@@ -1,5 +1,5 @@
-import { createRoot } from 'react-dom/client';
-import { useTranscriptionModal } from '~/hooks/use-transcription-modal';
+import { createRoot } from "react-dom/client";
+import { useTranscriptionModal } from "~/hooks/use-transcription-modal";
 
 interface TranscriptionModalProps {
   onTranscriptionComplete: (text: string) => void;
@@ -7,13 +7,19 @@ interface TranscriptionModalProps {
   onClose: () => void;
 }
 
-function TranscriptionModal({ onTranscriptionComplete, onError, onClose }: TranscriptionModalProps) {
-  const [{ isRecordingState, isProcessing, statusText }, { handleToggleRecording, handleStopAndInsert }] =
-    useTranscriptionModal({
-      onTranscriptionComplete,
-      onError,
-      onClose,
-    });
+function TranscriptionModal({
+  onTranscriptionComplete,
+  onError,
+  onClose,
+}: TranscriptionModalProps) {
+  const [
+    { isRecordingState, isProcessing, statusText },
+    { handleToggleRecording, handleStopAndInsert },
+  ] = useTranscriptionModal({
+    onTranscriptionComplete,
+    onError,
+    onClose,
+  });
 
   return (
     <div className="transcription-modal-overlay" onClick={onClose}>
@@ -26,20 +32,32 @@ function TranscriptionModal({ onTranscriptionComplete, onError, onClose }: Trans
         </div>
         <div className="transcription-content">
           <div className="recording-status">
-            <div className={`recording-dot ${isRecordingState ? 'recording' : ''}`} />
+            <div
+              className={`recording-dot ${isRecordingState ? "recording" : ""}`}
+            />
             <span>{statusText}</span>
           </div>
           <button
-            className={`record-btn ${isRecordingState ? 'recording' : ''}`}
+            className={`record-btn ${isRecordingState ? "recording" : ""}`}
             onClick={handleToggleRecording}
             disabled={isProcessing}
           >
-            <span className="record-btn-icon">{isRecordingState ? '🔴' : '🎤'}</span>
+            <span className="record-btn-icon">
+              {isRecordingState ? "🔴" : "🎤"}
+            </span>
             <span className="record-btn-text">
-              {isProcessing ? 'Processing...' : isRecordingState ? 'Recording...' : 'Start Recording'}
+              {isProcessing
+                ? "Processing..."
+                : isRecordingState
+                  ? "Recording..."
+                  : "Start Recording"}
             </span>
           </button>
-          <button className="stop-insert-btn" onClick={handleStopAndInsert} disabled={!isRecordingState || isProcessing}>
+          <button
+            className="stop-insert-btn"
+            onClick={handleStopAndInsert}
+            disabled={!isRecordingState || isProcessing}
+          >
             ⏹️ Stop & Insert
           </button>
         </div>
@@ -57,8 +75,8 @@ export function showTranscriptionModal(
 ) {
   // Create container if it doesn't exist
   if (!modalRoot) {
-    modalRoot = document.createElement('div');
-    modalRoot.id = 'transcription-modal-root';
+    modalRoot = document.createElement("div");
+    modalRoot.id = "transcription-modal-root";
     document.body.appendChild(modalRoot);
   }
 
