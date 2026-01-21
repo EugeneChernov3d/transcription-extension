@@ -10,6 +10,15 @@ export default defineConfig({
   modules: ["@wxt-dev/module-react"],
   manifest: {
     permissions: ["contextMenus"],
+    commands: {
+      'proofread-selection': {
+        description: 'Proofread selected text',
+        suggested_key: {
+          default: 'Alt+P',
+          mac: 'Alt+P',
+        },
+      },
+    },
     // host_permissions: [
     //   'https://transcription-api-omega.vercel.app/*',
     //   'http://localhost:3000/*',

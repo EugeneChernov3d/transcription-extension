@@ -1,4 +1,5 @@
 import { transcribeAudio } from '~/utils/audioRecorder';
+import { proofreadSelection } from '~/utils/proofread';
 
 export default defineBackground(() => {
   console.log('Hello background!', { id: browser.runtime.id });
@@ -54,54 +55,28 @@ export default defineBackground(() => {
     });
   });
 
+  // Handle keyboard commands
+  browser.commands.onCommand.addListener(async (command, tab) => {
+    if (command === 'proofread-selection' && tab?.id) {
+      try {
+        await proofreadSelection(tab.id);
+      } catch (error) {
+        console.error('Error in proofread command:', error);
+        if (tab?.id) {
+          await browser.tabs.sendMessage(tab.id, {
+            action: 'proofread-error',
+            error: error instanceof Error ? error.message : 'Unknown error occurred',
+          });
+        }
+      }
+    }
+  });
+
   // Handle context menu clicks
   browser.contextMenus.onClicked.addListener(async (info, tab) => {
     if (info.menuItemId === 'proofread-selection' && tab?.id) {
       try {
-        // Get selected text from content script
-        const response = await browser.tabs.sendMessage(tab.id, { action: 'get-selection' });
-
-        if (!response?.selectedText || response.selectedText.trim().length === 0) {
-          await browser.tabs.sendMessage(tab.id, {
-            action: 'proofread-error',
-            error: 'Please select some text to proofread',
-          });
-          return;
-        }
-
-        // Call the proofreading API
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://transcription-api-omega.vercel.app';
-        const API_KEY = import.meta.env.VITE_API_KEY;
-
-        if (!API_KEY) {
-          throw new Error('API key is missing. Please set VITE_API_KEY in your .env file.');
-        }
-
-        const apiResponse = await fetch(`${API_BASE_URL}/api/proofread`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY}`,
-          },
-          body: JSON.stringify({ text: response.selectedText }),
-        });
-
-        if (!apiResponse.ok) {
-          throw new Error(`API returned status: ${apiResponse.status}`);
-        }
-
-        const result = await apiResponse.json();
-        const proofreadText = result.proofreadText;
-
-        if (!proofreadText) {
-          throw new Error('No proofread text returned from API');
-        }
-
-        // Send proofread text back to content script
-        await browser.tabs.sendMessage(tab.id, {
-          action: 'proofread-complete',
-          proofreadText,
-        });
+        await proofreadSelection(tab.id);
       } catch (error) {
         console.error('Error in background script:', error);
         if (tab?.id) {
