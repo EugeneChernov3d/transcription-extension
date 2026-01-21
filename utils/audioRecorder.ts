@@ -77,10 +77,19 @@ export async function transcribeAudio(audioBlob: Blob): Promise<string> {
   formData.append("file", audioBlob, "audio.wav");
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://transcription-api-omega.vercel.app';
+  const API_KEY = import.meta.env.VITE_API_KEY;
+
+  if (!API_KEY) {
+    throw new Error('API key is missing. Please set VITE_API_KEY in your .env file.');
+  }
+
   const response = await fetch(
     `${API_BASE_URL}/api/transcribe`,
     {
       method: "POST",
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+      },
       body: formData,
     },
   );

@@ -71,9 +71,18 @@ export default defineBackground(() => {
 
         // Call the proofreading API
         const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://transcription-api-omega.vercel.app';
+        const API_KEY = import.meta.env.VITE_API_KEY;
+
+        if (!API_KEY) {
+          throw new Error('API key is missing. Please set VITE_API_KEY in your .env file.');
+        }
+
         const apiResponse = await fetch(`${API_BASE_URL}/api/proofread`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`,
+          },
           body: JSON.stringify({ text: response.selectedText }),
         });
 
