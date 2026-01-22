@@ -31,9 +31,9 @@ export default defineConfig({
         },
       },
     },
-    // host_permissions: [
-    //   'https://transcription-api-omega.vercel.app/*',
-    //   'http://localhost:3000/*',
-    // ],
+    host_permissions: [
+      'https://transcription-api-omega.vercel.app/*',
+      'http://localhost:3000/*',
+    ],
   },
 });

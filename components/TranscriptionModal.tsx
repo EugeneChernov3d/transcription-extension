@@ -92,9 +92,6 @@ function TranscriptionModal({
             height={100}
             fadeEdges={true}
           />
-          <button className="close-btn" onClick={onClose}>
-            ×
-          </button>
         </div>
         <div className="transcription-content">
           {/* <div className="recording-status">
@@ -110,11 +107,11 @@ function TranscriptionModal({
             disabled={!isRecordingState || isProcessing}
             title="Ctrl+Space to stop and transcribe"
           >
-            ⏹️ Stop & Insert
+            Transcribe
           </button>
 
           <div className="keyboard-hints">
-            <span className="hint">Ctrl+Space to start/stop & transcribe</span>
+            <span className="hint">Ctrl+Space to transcribe</span>
             <span className="hint">Esc to close</span>
           </div>
         </div>
