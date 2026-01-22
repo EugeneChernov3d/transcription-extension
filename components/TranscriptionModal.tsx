@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { useEffect, useRef } from "react";
 import { useTranscriptionModal } from "~/hooks/use-transcription-modal";
 import { LiveWaveform } from "@/components/ui/live-waveform";
 
@@ -21,6 +22,58 @@ function TranscriptionModal({
     onError,
     onClose,
   });
+
+  //TODO: make it a separate custom hook that would manage hotkeys
+  // Use ref to store the latest callbacks and state
+  const onCloseRef = useRef(onClose);
+  const handleStopAndInsertRef = useRef(handleStopAndInsert);
+  const isRecordingStateRef = useRef(isRecordingState);
+  const isProcessingRef = useRef(isProcessing);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+    handleStopAndInsertRef.current = handleStopAndInsert;
+    isRecordingStateRef.current = isRecordingState;
+    isProcessingRef.current = isProcessing;
+  }, [onClose, handleStopAndInsert, isRecordingState, isProcessing]);
+
+  // Handle keyboard shortcuts and custom events
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Escape to close modal
+      if (e.code === "Escape") {
+        e.preventDefault();
+        onCloseRef.current();
+        return;
+      }
+
+      // Ctrl+Space or Cmd+Space to stop and transcribe
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.code === "Space" &&
+        isRecordingStateRef.current &&
+        !isProcessingRef.current
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleStopAndInsertRef.current();
+      }
+    };
+
+    const handleStopEvent = (e: Event) => {
+      console.log("Received transcription-stop event");
+      if (isRecordingStateRef.current && !isProcessingRef.current) {
+        handleStopAndInsertRef.current();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown, { capture: true });
+    document.addEventListener("transcription-stop", handleStopEvent);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, { capture: true });
+      document.removeEventListener("transcription-stop", handleStopEvent);
+    };
+  }, []);
 
   return (
     <div className="transcription-modal-overlay" onClick={onClose}>
@@ -55,9 +108,15 @@ function TranscriptionModal({
             className="stop-insert-btn"
             onClick={handleStopAndInsert}
             disabled={!isRecordingState || isProcessing}
+            title="Ctrl+Space to stop and transcribe"
           >
             ⏹️ Stop & Insert
           </button>
+
+          <div className="keyboard-hints">
+            <span className="hint">Ctrl+Space to start/stop & transcribe</span>
+            <span className="hint">Esc to close</span>
+          </div>
         </div>
       </div>
     </div>

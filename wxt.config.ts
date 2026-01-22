@@ -8,6 +8,11 @@ export default defineConfig({
     plugins: [tailwindcss()],
   }),
   modules: ["@wxt-dev/module-react"],
+  webExt: {
+    binaries: {
+      firefox: 'firefox-developer',
+    },
+  },
   manifest: {
     permissions: ["contextMenus"],
     commands: {
@@ -16,6 +21,13 @@ export default defineConfig({
         suggested_key: {
           default: 'Alt+P',
           mac: 'Alt+P',
+        },
+      },
+      'toggle-transcription': {
+        description: 'Toggle transcription',
+        suggested_key: {
+          default: 'Ctrl+Space',
+          mac: 'MacCtrl+Space',
         },
       },
     },

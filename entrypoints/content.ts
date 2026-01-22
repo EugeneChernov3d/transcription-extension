@@ -39,6 +39,16 @@ export default defineContentScript({
       }
 
       if (message.action === "start-transcription") {
+        // Check if modal is already open (exists in DOM)
+        const modalRoot = document.getElementById('transcription-modal-root');
+        if (modalRoot) {
+          console.log('Modal already open, dispatching stop event');
+          // Dispatch custom event for the modal to handle
+          const stopEvent = new CustomEvent('transcription-stop', { bubbles: true });
+          document.dispatchEvent(stopEvent);
+          return false;
+        }
+
         // Store the currently focused element before showing modal
         const targetElement = document.activeElement;
         console.log('Stored target element:', targetElement);
