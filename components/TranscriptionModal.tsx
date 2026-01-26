@@ -84,17 +84,19 @@ function TranscriptionModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="transcription-visualizer">
-          <LiveWaveform
-            active={isRecordingState}
-            processing={isProcessing}
-            barWidth={4}
-            barHeight={40}
-            barGap={3}
-            barColor="rgba(255, 255, 255, 0.9)"
-            height={120}
-            fadeEdges={true}
-            mode="static"
-          />
+          <div className="waveform-container">
+            <LiveWaveform
+              active={isRecordingState}
+              processing={isProcessing}
+              barWidth={4}
+              barHeight={4}
+              barGap={3}
+              barColor="rgba(255, 255, 255, 0.9)"
+              height={120}
+              fadeEdges={true}
+              mode="static"
+            />
+          </div>
         </div>
 
         <div className="transcription-controls">

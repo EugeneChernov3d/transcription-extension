@@ -113,7 +113,7 @@ export const LiveWaveform = ({
         const processingData = [];
         const barCount = Math.floor(
           (containerRef.current?.getBoundingClientRect().width || 200) /
-            (barWidth + barGap),
+          (barWidth + barGap),
         );
 
         if (mode === "static") {
@@ -255,16 +255,16 @@ export const LiveWaveform = ({
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: deviceId
             ? {
-                deviceId: { exact: deviceId },
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true,
-              }
+              deviceId: { exact: deviceId },
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+            }
             : {
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true,
-              },
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+            },
         });
         streamRef.current = stream;
         onStreamReady?.(stream);
@@ -438,9 +438,13 @@ export const LiveWaveform = ({
               ? staticBarsRef.current
               : [];
 
-        for (let i = 0; i < barCount && i < dataToRender.length; i++) {
+        const actualBars = Math.min(barCount, dataToRender.length);
+        const totalBarsWidth = actualBars * step;
+        const startX = Math.max(0, (rect.width - totalBarsWidth) / 2);
+
+        for (let i = 0; i < actualBars; i++) {
           const value = dataToRender[i] || 0.1;
-          const x = i * step;
+          const x = startX + i * step;
           const barHeight = Math.max(baseBarHeight, value * rect.height * 0.8);
           const y = centerY - barHeight / 2;
 
@@ -534,7 +538,7 @@ export const LiveWaveform = ({
 
   return (
     <div
-      className={cn("relative h-full w-full", className)}
+      className={cn("flex h-full w-full items-center justify-center", className)}
       ref={containerRef}
       style={{ height: heightStyle }}
       aria-label={
@@ -551,7 +555,7 @@ export const LiveWaveform = ({
         <div className="border-muted-foreground/20 absolute top-1/2 right-0 left-0 -translate-y-1/2 border-t-2 border-dotted" />
       )}
       <canvas
-        className="block h-full w-full"
+        className="block"
         ref={canvasRef}
         aria-hidden="true"
       />
