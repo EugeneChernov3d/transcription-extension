@@ -2,6 +2,8 @@ import { createRoot } from "react-dom/client";
 import { useEffect, useRef } from "react";
 import { useTranscriptionModal } from "~/hooks/use-transcription-modal";
 import { LiveWaveform } from "@/components/ui/live-waveform";
+import { Kbd } from "./ui/kbd";
+import "./TranscriptionModal.css";
 
 interface TranscriptionModalProps {
   onTranscriptionComplete: (text: string) => void;
@@ -76,43 +78,53 @@ function TranscriptionModal({
   }, []);
 
   return (
-    <div className="transcription-modal-overlay" onClick={onClose}>
+    <div className="transcription-modal-overlay">
       <div
-        className="transcription-modal bg-white"
+        className="transcription-modal"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="transcription-header">
+        <div className="transcription-visualizer">
           <LiveWaveform
             active={isRecordingState}
             processing={isProcessing}
             barWidth={4}
-            barHeight={6}
-            barGap={2}
-            barColor="#3b82f6"
-            height={100}
+            barHeight={40}
+            barGap={3}
+            barColor="rgba(255, 255, 255, 0.9)"
+            height={120}
             fadeEdges={true}
+            mode="static"
           />
         </div>
-        <div className="transcription-content">
-          {/* <div className="recording-status">
-            <div
-              className={`recording-dot ${isRecordingState ? "recording" : ""}`}
-            />
-            <span>{statusText}</span>
-          </div> */}
 
-          <button
-            className="stop-insert-btn"
-            onClick={handleStopAndInsert}
-            disabled={!isRecordingState || isProcessing}
-            title="Ctrl+Space to stop and transcribe"
-          >
-            Transcribe
-          </button>
+        <div className="transcription-controls">
+          <div className="control-group left">
+            <div className="status-indicator">
+              <div className={`status-dot ${isRecordingState ? 'recording' : ''}`} />
+              <span className="status-text">{isRecordingState ? 'Voice' : 'Paused'}</span>
+            </div>
+            <Kbd>⌃ ⇧ Z</Kbd>
+          </div>
 
-          <div className="keyboard-hints">
-            <span className="hint">Ctrl+Space to transcribe</span>
-            <span className="hint">Esc to close</span>
+          <div className="control-group right">
+            <button
+              className="control-btn primary"
+              onClick={handleStopAndInsert}
+              disabled={!isRecordingState || isProcessing}
+            >
+              Stop
+            </button>
+            <Kbd>⌥ ⌘ ⌃ 0</Kbd>
+
+            <div className="divider" />
+
+            <button
+              className="control-btn"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+            <Kbd>Esc</Kbd>
           </div>
         </div>
       </div>
