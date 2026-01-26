@@ -11,7 +11,7 @@ interface TranscriptionModalProps {
   onClose: () => void;
 }
 
-function TranscriptionModal({
+export default function TranscriptionModal({
   onTranscriptionComplete,
   onError,
   onClose,
@@ -79,10 +79,7 @@ function TranscriptionModal({
 
   return (
     <div className="transcription-modal-overlay">
-      <div
-        className="transcription-modal"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="transcription-modal" onClick={(e) => e.stopPropagation()}>
         <div className="transcription-visualizer">
           <div className="waveform-container">
             <LiveWaveform
@@ -102,8 +99,12 @@ function TranscriptionModal({
         <div className="transcription-controls">
           <div className="control-group left">
             <div className="status-indicator">
-              <div className={`status-dot ${isRecordingState ? 'recording' : ''}`} />
-              <span className="status-text">{isRecordingState ? 'Voice' : 'Paused'}</span>
+              <div
+                className={`status-dot ${isRecordingState ? "recording" : ""}`}
+              />
+              <span className="status-text">
+                {isRecordingState ? "Voice" : "Paused"}
+              </span>
             </div>
             <Kbd>⌃ ⇧ Z</Kbd>
           </div>
@@ -120,10 +121,7 @@ function TranscriptionModal({
 
             <div className="divider" />
 
-            <button
-              className="control-btn"
-              onClick={onClose}
-            >
+            <button className="control-btn" onClick={onClose}>
               Cancel
             </button>
             <Kbd>Esc</Kbd>
@@ -131,45 +129,5 @@ function TranscriptionModal({
         </div>
       </div>
     </div>
-  );
-}
-
-let modalRoot: HTMLElement | null = null;
-let reactRoot: ReturnType<typeof createRoot> | null = null;
-
-export function showTranscriptionModal(
-  onTranscriptionComplete: (text: string) => void,
-  onError: (error: string) => void,
-) {
-  // Create container if it doesn't exist
-  if (!modalRoot) {
-    modalRoot = document.createElement("div");
-    modalRoot.id = "transcription-modal-root";
-    document.body.appendChild(modalRoot);
-  }
-
-  // Create React root and render modal
-  if (!reactRoot) {
-    reactRoot = createRoot(modalRoot);
-  }
-
-  const handleClose = () => {
-    // Unmount the modal and remove container
-    if (reactRoot) {
-      reactRoot.unmount();
-      reactRoot = null;
-    }
-    if (modalRoot && modalRoot.parentNode) {
-      modalRoot.parentNode.removeChild(modalRoot);
-    }
-    modalRoot = null;
-  };
-
-  reactRoot.render(
-    <TranscriptionModal
-      onTranscriptionComplete={onTranscriptionComplete}
-      onError={onError}
-      onClose={handleClose}
-    />,
   );
 }
