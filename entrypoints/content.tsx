@@ -4,7 +4,7 @@ import "~/components/TranscriptionModal.css";
 
 import { insertTextAtCursor } from "~/utils/insertText";
 import ReactDOM from "react-dom/client";
-import React from "react";
+// @ts-ignore
 import TranscriptionModal from "@/components/TranscriptionModal";
 
 export default defineContentScript({
@@ -53,25 +53,19 @@ export default defineContentScript({
         }
 
         if (message.action === "start-transcription") {
-          // If UI already exists (mounted), we might want to just focus it or do nothing.
-          // But for fresh state, let's create it or ensure it's mounted.
+          // If UI already exists, we ignore the global command to avoid conflict with
+          // the component's internal handling of Ctrl+Space (which stops/inserts).
+          if (ui) {
+            console.log(
+              "Transcription modal already open, stopping existing recording",
+            );
+            document.dispatchEvent(new CustomEvent("transcription-stop"));
+            return false;
+          }
 
           // Store the currently focused element before showing modal
           const targetElement = document.activeElement;
           console.log("Stored target element:", targetElement);
-
-          if (ui) {
-            // Check if mounted? createShadowRootUi returns object with 'mounted' property in some versions?
-            // Assuming we just mount it. If already mounted, usually fine or we can remove then remount.
-            // But we want to re-render with fresh callbacks maybe?
-            // Let's create a fresh UI for simplicity and safety against stale closures.
-            // But waiting for createShadowRootUi might be slow? It's fast.
-            try {
-              ui.remove();
-            } catch (e) {
-              /* ignore */
-            }
-          }
 
           ui = await createShadowRootUi(ctx, {
             name: "transcription-ui",
@@ -102,6 +96,7 @@ export default defineContentScript({
                   }}
                   onClose={() => {
                     ui?.remove();
+                    ui = null;
                   }}
                 />,
               );

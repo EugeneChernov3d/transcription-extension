@@ -50,16 +50,7 @@ export default function TranscriptionModal({
       }
 
       // Ctrl+Space or Cmd+Space to stop and transcribe
-      if (
-        (e.ctrlKey || e.metaKey) &&
-        e.code === "Space" &&
-        isRecordingStateRef.current &&
-        !isProcessingRef.current
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-        handleStopAndInsertRef.current();
-      }
+
     };
 
     const handleStopEvent = (e: Event) => {
