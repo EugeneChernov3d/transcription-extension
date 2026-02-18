@@ -50,7 +50,6 @@ export default function TranscriptionModal({
       }
 
       // Ctrl+Space or Cmd+Space to stop and transcribe
-
     };
 
     const handleStopEvent = (e: Event) => {

@@ -21,7 +21,6 @@
   align-items: center;
   justify-content: center;
   pointer-events: auto;
-  backdrop-filter: blur(2px);
 }
 
 .transcription-modal {

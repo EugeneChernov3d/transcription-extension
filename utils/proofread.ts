@@ -1,7 +1,9 @@
 export async function proofreadSelection(tabId: number) {
   const response = await browser.tabs.sendMessage(tabId, { action: 'get-selection' });
+  const selectedText = response?.selectedText;
+  const contextText = response?.contextText ?? selectedText;
 
-  if (!response?.selectedText || response.selectedText.trim().length === 0) {
+  if (!selectedText || selectedText.trim().length === 0) {
     await browser.tabs.sendMessage(tabId, {
       action: 'proofread-error',
       error: 'Please select some text to proofread',
@@ -22,7 +24,10 @@ export async function proofreadSelection(tabId: number) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${API_KEY}`,
     },
-    body: JSON.stringify({ text: response.selectedText }),
+    body: JSON.stringify({
+      text: selectedText,
+      contextText,
+    }),
   });
 
   if (!apiResponse.ok) {

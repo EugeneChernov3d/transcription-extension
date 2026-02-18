@@ -10,7 +10,6 @@ export function replaceText(proofreadText: string) {
 
   if (!cachedSelectionInfo) {
     console.error("No cached selection info available");
-    alert("Selection was lost. Please try again.");
     return;
   }
 

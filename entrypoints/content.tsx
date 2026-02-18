@@ -22,8 +22,8 @@ export default defineContentScript({
         );
 
         if (message.action === "get-selection") {
-          const selectedText = getSelectionText();
-          sendResponse({ selectedText });
+          const selectionSnapshot = getSelectionText();
+          sendResponse(selectionSnapshot);
           return true;
         }
 
@@ -33,7 +33,7 @@ export default defineContentScript({
         }
 
         if (message.action === "proofread-error") {
-          alert(`Error: ${message.error}`);
+          console.error(`Error: ${message.error}`);
           return false;
         }
 
@@ -92,7 +92,7 @@ export default defineContentScript({
                     console.log("insertTextAtCursor result:", success);
                   }}
                   onError={(error: string) => {
-                    alert(`Error: ${error}`);
+                    console.error(`Error: ${error}`);
                   }}
                   onClose={() => {
                     ui?.remove();

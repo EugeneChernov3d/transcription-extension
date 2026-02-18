@@ -1,4 +1,4 @@
-import { CachedSelectionInfo } from "./types";
+import { CachedSelectionInfo, SelectionSnapshot } from "./types";
 
 let cachedSelectionInfo: CachedSelectionInfo | null = null;
 
@@ -6,7 +6,7 @@ let cachedSelectionInfo: CachedSelectionInfo | null = null;
  * Gets the currently selected text and caches selection information for later replacement.
  * Works with input/textarea elements, contenteditable elements, and regular page text.
  */
-export function getSelectionText(): string {
+export function getSelectionText(): SelectionSnapshot {
   const selection = window.getSelection();
   const selectedText = selection?.toString() ?? "";
 
@@ -24,6 +24,12 @@ export function getSelectionText(): string {
       selectionEnd: activeElement.selectionEnd ?? 0,
       currentValue: activeElement.value,
     };
+
+    return {
+      selectedText,
+      contextText: activeElement.value,
+      sourceType: "input-textarea",
+    };
   } else {
     // For contenteditable elements and regular page text
     try {
@@ -36,7 +42,11 @@ export function getSelectionText(): string {
     }
   }
 
-  return selectedText;
+  return {
+    selectedText,
+    contextText: selectedText,
+    sourceType: "dom-selection",
+  };
 }
 
 /**
